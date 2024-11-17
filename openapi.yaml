@@ -1,0 +1,121 @@
+openapi: 3.0.0
+info:
+  title: Messagerie API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /utilisateurs:
+    post:
+      summary: Inscrire un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UtilisateurSignup"
+      responses:
+        "201":
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UtilisateurResponse"
+        "400":
+          description: Erreur de validation ou utilisateur existant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /utilisateurs/login:
+    post:
+      summary: Connexion d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UtilisateurLogin"
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Erreur d'authentification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UtilisateurSignup:
+      type: object
+      required:
+        - nom
+        - prenom
+        - email
+        - mdp
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+          format: email
+        mdp:
+          type: string
+          format: password
+    UtilisateurLogin:
+      type: object
+      required:
+        - email
+        - mdp
+      properties:
+        email:
+          type: string
+          format: email
+        mdp:
+          type: string
+          format: password
+    UtilisateurResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        utilisateur:
+          $ref: "#/components/schemas/Utilisateur"
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    Utilisateur:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+        date_creation:
+          type: string
+          format: date-time
+        status_en_ligne:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
