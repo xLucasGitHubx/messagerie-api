@@ -15,18 +15,18 @@ app.use(express.json());
 // Charger la spécification OpenAPI
 const apiSpec = YAML.load(path.join(__dirname, "openapi.yaml"));
 
-// Intégrer express-openapi-validator
-// app.use(
-// 	OpenApiValidator.middleware({
-// 		apiSpec: path.join(__dirname, "openapi.yaml"),
-// 		validateRequests: true, // (par défaut) valide les requêtes
-// 		validateResponses: true, // valide les réponses
-// 	})
-// );
-
-// Importer et utiliser les routes des utilisateurs
+// Importer et utiliser les routes de l'API
 const utilisateurRouter = require("./routes/utilisateur");
 app.use("/utilisateurs", utilisateurRouter);
+
+const messageRouter = require("./routes/message");
+app.use("/messages", messageRouter);
+
+const statusRouter = require("./routes/status");
+app.use("/statuts", statusRouter);
+
+const pieceJointeRouter = require("./routes/pieceJointe");
+app.use("/pieces-jointes", pieceJointeRouter);
 
 // Servir la documentation Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));

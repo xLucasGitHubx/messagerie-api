@@ -5,7 +5,7 @@ info:
 servers:
   - url: http://localhost:3000
 paths:
-  /utilisateurs:
+  /utilisateurs/signup:
     post:
       summary: Inscrire un nouvel utilisateur
       requestBody:
@@ -45,6 +45,147 @@ paths:
                 $ref: "#/components/schemas/LoginResponse"
         "400":
           description: Erreur d'authentification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /messages:
+    post:
+      summary: Envoyer un message
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageCreate"
+      responses:
+        "201":
+          description: Message envoyé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Erreur lors de l'envoi du message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /messages/recu:
+    get:
+      summary: Récupérer les messages reçus
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Liste des messages reçus
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+  /messages/envoyes:
+    get:
+      summary: Récupérer les messages envoyés
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Liste des messages envoyés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+  /statuts:
+    get:
+      summary: Récupérer tous les statuts
+      responses:
+        "200":
+          description: Liste des statuts disponibles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Statut"
+    post:
+      summary: Créer un nouveau statut
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StatutCreate"
+      responses:
+        "201":
+          description: Statut créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Statut"
+        "400":
+          description: Erreur lors de la création du statut
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /pieces-jointes/{messageId}:
+    post:
+      summary: Ajouter une pièce jointe à un message
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Pièce jointe ajoutée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PieceJointeResponse"
+        "400":
+          description: Erreur lors de l'ajout de la pièce jointe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /pieces-jointes/{id}:
+    get:
+      summary: Télécharger une pièce jointe
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pièce jointe téléchargée avec succès
+          content:
+            application/octet-stream: {}
+        "404":
+          description: Pièce jointe non trouvée
           content:
             application/json:
               schema:
@@ -114,6 +255,84 @@ components:
           format: date-time
         status_en_ligne:
           type: boolean
+    MessageCreate:
+      type: object
+      required:
+        - corps
+        - destinataires
+      properties:
+        objet:
+          type: string
+        corps:
+          type: string
+        destinataires:
+          type: array
+          items:
+            type: integer
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Message"
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        objet:
+          type: string
+        corps:
+          type: string
+        date_envoi:
+          type: string
+          format: date-time
+        expediteurId:
+          type: integer
+        destinataires:
+          type: array
+          items:
+            $ref: "#/components/schemas/Destinataire"
+    Destinataire:
+      type: object
+      properties:
+        id_destinataire:
+          type: integer
+    Statut:
+      type: object
+      properties:
+        id:
+          type: integer
+        etat:
+          type: string
+    StatutCreate:
+      type: object
+      required:
+        - etat
+      properties:
+        etat:
+          type: string
+    PieceJointeResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/PieceJointe"
+    PieceJointe:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom_fichier:
+          type: string
+        taille:
+          type: integer
+        chemin_de_stockage:
+          type: string
+        messageId:
+          type: integer
     Error:
       type: object
       properties:

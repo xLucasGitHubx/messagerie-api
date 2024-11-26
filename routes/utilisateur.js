@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Route pour créer un utilisateur (Inscription)
-router.post("/", async (req, res) => {
+router.post("/signup", async (req, res) => {
 	const { nom, prenom, email, mdp } = req.body;
 	try {
 		// Vérifier si l'utilisateur existe déjà
