@@ -7,11 +7,36 @@ const authenticateToken = require("../middleware/authenticateToken");
 const { initializeStatus } = require("../utils/databaseDefaultData");
 // Envoyer un message
 router.post("/", authenticateToken, async (req, res) => {
-	const { objet, corps, destinataires } = req.body;
+	const { objet, corps, destinataires } = req.body; // Les destinataires sont un tableau d'emails
 	const expediteurId = req.user.id; // ID de l'utilisateur expéditeur, extrait du token
 
 	try {
-		await initializeStatus(prisma);
+		await initializeStatus(prisma); // Initialiser les statuts si ce n'est pas le cas
+		// Vérifiez que les emails des destinataires existent dans la base de données
+		const utilisateursDestinataires = await prisma.utilisateur.findMany({
+			where: {
+				email: {
+					in: destinataires, // Vérifie les emails des destinataires
+				},
+			},
+			select: {
+				id: true,
+				email: true,
+				nom: true,
+				prenom: true,
+			},
+		});
+
+		// Vérifiez que tous les emails fournis correspondent à des utilisateurs existants
+		const emailsTrouves = utilisateursDestinataires.map((user) => user.email);
+		const emailsNonTrouves = destinataires.filter((email) => !emailsTrouves.includes(email));
+
+		if (emailsNonTrouves.length > 0) {
+			return res.status(400).json({
+				message: "Certains emails n'existent pas dans le système",
+				emailsNonTrouves,
+			});
+		}
 
 		// Créer le message et associer les destinataires
 		const message = await prisma.message.create({
@@ -22,8 +47,8 @@ router.post("/", authenticateToken, async (req, res) => {
 				statusId: 1, // Par exemple : 1 = "non lu"
 				expediteurId,
 				recevoir: {
-					create: destinataires.map((destId) => ({
-						id_destinataire: destId, // Ajout des destinataires liés au message
+					create: utilisateursDestinataires.map((dest) => ({
+						id_destinataire: dest.id, // Associe l'ID des utilisateurs trouvés
 					})),
 				},
 			},

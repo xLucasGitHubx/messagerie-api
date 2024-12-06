@@ -113,27 +113,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Statut"
-    post:
-      summary: Créer un nouveau statut
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/StatutCreate"
-      responses:
-        "201":
-          description: Statut créé avec succès
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Statut"
-        "400":
-          description: Erreur lors de la création du statut
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
   /pieces-jointes/{messageId}:
     post:
       summary: Ajouter une pièce jointe à un message

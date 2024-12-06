@@ -13,18 +13,4 @@ router.get("/", async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 });
-
-// Créer un nouveau statut
-router.post("/", async (req, res) => {
-	const { etat } = req.body;
-	try {
-		const nouveauStatut = await prisma.status.create({
-			data: { etat },
-		});
-		res.status(201).json(nouveauStatut);
-	} catch (error) {
-		res.status(400).json({ message: error.message });
-	}
-});
-
 module.exports = router;
