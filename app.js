@@ -22,9 +22,6 @@ app.use("/utilisateurs", utilisateurRouter);
 const messageRouter = require("./routes/message");
 app.use("/messages", messageRouter);
 
-const statusRouter = require("./routes/status");
-app.use("/status", statusRouter);
-
 const pieceJointeRouter = require("./routes/pieceJointe");
 app.use("/pieces-jointes", pieceJointeRouter);
 
