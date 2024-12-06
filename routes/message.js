@@ -10,6 +10,10 @@ router.post("/", authenticateToken, async (req, res) => {
 	const { objet, corps, destinataires } = req.body; // Les destinataires sont un tableau d'emails
 	const expediteurId = req.user.id; // ID de l'utilisateur expéditeur, extrait du token
 
+	if (!corps || !corps.trim()) {
+		return res.status(400).json({ message: "Le champ 'corps' est requis et ne peut pas être vide." });
+	}
+
 	try {
 		await initializeStatus(prisma); // Initialiser les statuts si ce n'est pas le cas
 		// Vérifiez que les emails des destinataires existent dans la base de données

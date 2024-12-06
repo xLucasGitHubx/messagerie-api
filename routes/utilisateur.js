@@ -12,6 +12,15 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Route pour créer un utilisateur (Inscription)
 router.post("/signup", async (req, res) => {
 	const { nom, prenom, email, mdp } = req.body;
+
+	if (!nom || !nom.trim()) {
+		return res.status(400).json({ message: "Le champ 'nom' est requis et ne peut pas être vide." });
+	}
+
+	if (!prenom || !prenom.trim()) {
+		return res.status(400).json({ message: "Le champ 'prenom' est requis et ne peut pas être vide." });
+	}
+
 	try {
 		// Vérifier si l'utilisateur existe déjà
 		const existingUser = await prisma.utilisateur.findUnique({ where: { email } });
