@@ -88,7 +88,7 @@ npm install
 Démarrez le serveur avec la commande suivante :
 
 ```bash
-node app.js
+node server.js
 ```
 
 Le serveur est accessible sur [http://localhost:3000](http://localhost:3000).
