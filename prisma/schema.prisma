@@ -8,20 +8,24 @@ datasource db {
 }
 
 model message {
-  id           Int           @id @default(autoincrement())
-  objet        String?
-  corps        String
-  date_envoi   DateTime      @default(now())
-  statusId     Int
-  expediteurId Int
+  id           Int           @id @default(autoincrement()) // Identifiant unique du message
+  objet        String?       // Objet du message (optionnel)
+  corps        String        // Contenu du message
+  date_envoi   DateTime      @default(now())               // Date et heure d'envoi (par défaut : maintenant)
+  statusId     Int           // Référence vers le statut du message
+  expediteurId Int           // Référence vers l'expéditeur du message (utilisateur)
+
+  // Relations
   utilisateur  utilisateur   @relation(fields: [expediteurId], references: [id], map: "Message_expediteurId_fkey")
   status       status        @relation(fields: [statusId], references: [id], map: "Message_statusId_fkey")
-  piecejointe  piecejointe[]
-  recevoir     recevoir[]
+  piecejointe  piecejointe[] // Liste des pièces jointes associées à ce message
+  recevoir     recevoir[]    // Liste des destinataires du message (relation avec le modèle "recevoir")
 
+  // Index pour optimiser les requêtes sur les clés étrangères
   @@index([expediteurId], map: "Message_expediteurId_fkey")
   @@index([statusId], map: "Message_statusId_fkey")
 }
+
 
 model piecejointe {
   id                 Int     @id @default(autoincrement())
