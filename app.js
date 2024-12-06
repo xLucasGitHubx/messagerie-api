@@ -1,15 +1,14 @@
 // app.js
 const express = require("express");
-const app = express();
-const port = process.env.PORT || 3000;
-const OpenApiValidator = require("express-openapi-validator");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const path = require("path");
+const OpenApiValidator = require("express-openapi-validator");
 
 // Charger les variables d'environnement
 require("dotenv").config();
 
+const app = express();
 app.use(express.json());
 
 // Charger la spécification OpenAPI
@@ -30,13 +29,11 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
 // Gestion des erreurs
 app.use((err, req, res, next) => {
-	// Format de réponse d'erreur
 	res.status(err.status || 500).json({
 		message: err.message,
 		errors: err.errors,
 	});
 });
 
-app.listen(port, () => {
-	console.log(`Serveur en cours d'exécution sur le port ${port}`);
-});
+// Exporter l'application pour l'utiliser dans server.js
+module.exports = app;
