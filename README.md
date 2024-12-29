@@ -43,7 +43,7 @@ npm install
 | `yamljs`                    | Charger les fichiers YAML pour Swagger.                   |
 | `jsonwebtoken`              | Gérer l'authentification avec JWT.                        |
 | `bcrypt`                    | Hachage sécurisé des mots de passe.                       |
-| `multer`                    | Gestion de l'upload des fichiers pour les pièces jointes. |
+| `multer@1.4.3`              | Gestion de l'upload des fichiers pour les pièces jointes. |
 
 ---
 

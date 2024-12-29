@@ -9,7 +9,10 @@ const OpenApiValidator = require("express-openapi-validator");
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+
+// Middleware pour parser JSON uniquement
+app.use(express.json()); // Gère les requêtes JSON
+// app.use(express.urlencoded({ extended: true })); // Gère les requêtes URL-encoded (si nécessaire)
 
 // Charger la spécification OpenAPI
 const apiSpec = YAML.load(path.join(__dirname, "openapi.yaml"));
@@ -35,6 +38,7 @@ app.use("/messages", messageRouter);
 
 // Gestion des erreurs
 app.use((err, req, res, next) => {
+	console.error(err);
 	res.status(err.status || 500).json({
 		message: err.message,
 		errors: err.errors,
