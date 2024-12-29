@@ -33,9 +33,6 @@ app.use("/utilisateurs", utilisateurRouter);
 const messageRouter = require("./routes/message");
 app.use("/messages", messageRouter);
 
-const pieceJointeRouter = require("./routes/pieceJointe");
-app.use("/pieces-jointes", pieceJointeRouter);
-
 // Gestion des erreurs
 app.use((err, req, res, next) => {
 	res.status(err.status || 500).json({
