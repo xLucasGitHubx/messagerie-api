@@ -435,8 +435,11 @@ components:
           example: '["destinataire1@example.com", "destinataire2@example.com"]'
         files:
           type: string
-          format: binary
+          items:
+            type: string
+            format: binary
           description: Jusqu'à 5 fichiers joints
+          example: ["document1.pdf", "image1.png"]
 
     DestinataireDetail:
       type: object
@@ -469,7 +472,7 @@ components:
           example: 2048
         chemin_de_stockage:
           type: string
-          example: "/uploads/document.pdf"
+          example: "/uploads/1638316800000-document.pdf"
         messageId:
           type: integer
           example: 1

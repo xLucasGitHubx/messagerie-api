@@ -156,13 +156,13 @@ router.post("/", authenticateToken, upload.single("files"), async (req, res) => 
 						id_destinataire: dest.id,
 					})),
 				},
-				piecesJointes: {
+				piecejointe: {
 					create: files, // On associe les pièces jointes
 				},
 			},
 			include: {
 				// Permet de retourner les données des destinataires et des pièces jointes dans la réponse
-				piecesJointes: true,
+				piecejointe: true,
 				recevoir: {
 					include: {
 						utilisateur: true,
@@ -200,7 +200,7 @@ router.get("/recu", authenticateToken, async (req, res) => {
 						// Infos sur l'expéditeur
 						utilisateur: { select: { id: true, nom: true, prenom: true, email: true } },
 						// Pièces jointes
-						piecesJointes: true,
+						piecejointe: true,
 						// Statut (non lu, lu, etc.)
 						status: { select: { id: true, etat: true } },
 					},
@@ -216,7 +216,7 @@ router.get("/recu", authenticateToken, async (req, res) => {
 			date_envoi: recevoir.message.date_envoi,
 			statut: recevoir.message.status.etat, // "non lu" ou "lu"
 			expediteur: recevoir.message.utilisateur,
-			piecesJointes: recevoir.message.piecesJointes.map((file) => ({
+			piecejointe: recevoir.message.piecejointe.map((file) => ({
 				id: file.id,
 				nom_fichier: file.nom_fichier,
 				taille: file.taille,
@@ -250,7 +250,7 @@ router.get("/envoyes", authenticateToken, async (req, res) => {
 						utilisateur: { select: { id: true, nom: true, prenom: true, email: true } },
 					},
 				},
-				piecesJointes: true,
+				piecejointe: true,
 			},
 		});
 
@@ -266,7 +266,7 @@ router.get("/envoyes", authenticateToken, async (req, res) => {
 				prenom: dest.utilisateur.prenom,
 				email: dest.utilisateur.email,
 			})),
-			piecesJointes: message.piecesJointes.map((file) => ({
+			piecejointe: message.piecejointe.map((file) => ({
 				id: file.id,
 				nom_fichier: file.nom_fichier,
 				taille: file.taille,
