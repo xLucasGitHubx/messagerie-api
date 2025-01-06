@@ -10,26 +10,29 @@ require("dotenv").config();
 
 const app = express();
 
-// Middleware pour parser JSON uniquement
-app.use(express.json()); // Gère les requêtes JSON
-// app.use(express.urlencoded({ extended: true })); // Gère les requêtes URL-encoded (si nécessaire)
+// Parse uniquement les JSON et, si besoin, les formulaires URL-encoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Charger la spécification OpenAPI
 const apiSpec = YAML.load(path.join(__dirname, "openapi.yaml"));
 
-// Servir la documentation Swagger
+// Documentation Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
-// Middleware de validation OpenAPI
+// Désactiver la gestion multipart dans OpenAPI Validator
 app.use(
 	OpenApiValidator.middleware({
 		apiSpec: apiSpec,
-		validateRequests: true, // Valider les requêtes entrantes
-		validateResponses: false, // Désactivé ici pour simplifier
+		validateRequests: {
+			allowUnknownQueryParameters: true,
+			multipart: false, // Désactive la gestion automatique des fichiers
+		},
+		validateResponses: false,
 	})
 );
 
-// Importer et utiliser les routes de l'API
+// Routes de l'API
 const utilisateurRouter = require("./routes/utilisateur");
 app.use("/utilisateurs", utilisateurRouter);
 
