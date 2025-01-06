@@ -97,3 +97,4 @@ Le serveur est accessible sur [http://localhost:3000](http://localhost:3000).
 
 - revoir doc
   -effectuer des test
+  création de la collection postman

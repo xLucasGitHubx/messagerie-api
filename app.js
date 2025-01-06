@@ -20,6 +20,10 @@ const apiSpec = YAML.load(path.join(__dirname, "openapi.yaml"));
 // Documentation Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiSpec));
 
+//upload de fichier dans un message
+const uploadRouter = require("./routes/upload");
+app.use("/messages/upload", uploadRouter);
+
 // Désactiver la gestion multipart dans OpenAPI Validator
 app.use(
 	OpenApiValidator.middleware({

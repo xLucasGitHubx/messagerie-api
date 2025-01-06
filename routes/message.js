@@ -122,18 +122,16 @@ router.post("/", authenticateToken, upload.single("files"), async (req, res) => 
 			});
 		}
 
-		// Validation de la présence des fichiers
-		// (si vous souhaitez obliger au moins un fichier, décommentez la ligne ci-dessous)
-		// if (!req.files || req.files.length === 0) {
-		//   return res.status(400).json({ message: "Aucun fichier n'a été uploadé." });
-		// }
-
 		// Prépare les données des pièces jointes
-		const files = req.files.map((file) => ({
-			nom_fichier: file.originalname,
-			taille: file.size,
-			chemin_de_stockage: file.path,
-		}));
+		if (req.file) {
+			const files = req.files.map((file) => ({
+				nom_fichier: file.originalname,
+				taille: file.size,
+				chemin_de_stockage: file.path,
+			}));
+		} else {
+			const files = [];
+		}
 
 		// Création du message dans la base de données
 		const message = await prisma.message.create({
