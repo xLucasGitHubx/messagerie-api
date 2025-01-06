@@ -80,12 +80,12 @@ paths:
                 $ref: "#/components/schemas/Error"
 
   # Routes Messages
-  /messages:
+  /messages/upload:
     post:
       tags:
         - Messages
-      summary: Envoyer un message avec pièces jointes
-      description: Permet d'envoyer un message avec jusqu'à 5 pièces jointes.
+      summary: Envoyer un message avec pièce jointe
+      description: Permet d'envoyer un message avec jusqu'à une pièce jointe.
       security:
         - bearerAuth: []
       requestBody:
