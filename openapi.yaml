@@ -438,8 +438,8 @@ components:
           items:
             type: string
             format: binary
-          description: Jusqu'à 5 fichiers joints
-          example: ["document1.pdf", "image1.png"]
+          description: Jusqu'à 1 fichiers joints
+          example: "document1.pdf"
 
     DestinataireDetail:
       type: object

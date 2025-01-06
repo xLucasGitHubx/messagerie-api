@@ -48,14 +48,6 @@ const upload = multer({
 	},
 });
 
-// Middleware pour désactiver express.json() pour multipart/form-data
-// router.use((req, res, next) => {
-// 	if (req.is("multipart/form-data")) {
-// 		return next();
-// 	}
-// 	express.json()(req, res, next);
-// });
-
 //-------------------------------------------------------------------------
 // 2. Route POST pour envoyer un message avec pièces jointes (multipart/form-data)
 //-------------------------------------------------------------------------
