@@ -2,12 +2,31 @@ openapi: 3.0.0
 info:
   title: Messagerie Privée API
   version: 2.1.0
+  description: |
+    API permettant la gestion de messages privés, incluant l'envoi, la réception, et la gestion des statuts des messages.
+  contact:
+    name: Support Technique API Messagerie auteur - Lucas Madjinda
+    email: lucasmadjinda@gmail.com
 servers:
   - url: http://localhost:3000
+    description: Serveur de développement local
+
+tags:
+  - name: Utilisateurs
+    description: Gestion des utilisateurs
+  - name: Messages
+    description: Gestion des messages
+  - name: Pièces Jointes
+    description: Gestion des pièces jointes
+
 paths:
+  # Routes Utilisateurs
   /utilisateurs/signup:
     post:
+      tags:
+        - Utilisateurs
       summary: Inscrire un nouvel utilisateur
+      description: Permet de créer un nouveau compte utilisateur.
       requestBody:
         required: true
         content:
@@ -27,9 +46,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
   /utilisateurs/login:
     post:
+      tags:
+        - Utilisateurs
       summary: Connexion d'un utilisateur
+      description: Authentifie un utilisateur et retourne un token JWT.
       requestBody:
         required: true
         content:
@@ -55,8 +78,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  # Routes Messages
   /messages:
     post:
+      tags:
+        - Messages
       summary: Envoyer un message avec pièces jointes
       description: Permet d'envoyer un message avec jusqu'à 5 pièces jointes.
       security:
@@ -66,28 +93,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                objet:
-                  type: string
-                  description: Objet du message
-                corps:
-                  type: string
-                  description: Contenu du message
-                destinataires:
-                  type: string
-                  description: Tableau JSON des adresses e-mail (envoyé sous forme de chaîne)
-                files:
-                  type: string
-                  format: binary
-                  # type: array
-                  # items:
-                  #   type: string
-                  #   format: binary
-                  description: Jusqu'à 5 fichiers joints
-              required:
-                - corps
-                - destinataires
+              $ref: "#/components/schemas/MessageCreate"
       responses:
         "201":
           description: Message envoyé avec succès
@@ -113,10 +119,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
   /messages/recu:
     get:
+      tags:
+        - Messages
       summary: Récupérer la liste des messages reçus
-      description: L'utilisateur doit être authentifié.
+      description: Récupère tous les messages reçus par l'utilisateur authentifié.
       security:
         - bearerAuth: []
       responses:
@@ -140,10 +149,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /messages/recu/lu:
+    put:
+      tags:
+        - Messages
+      summary: Marquer un message reçu comme "lu"
+      description: Met à jour le statut d'un message reçu en "lu".
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatut"
+      responses:
+        "200":
+          description: Message marqué comme lu avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Erreur de validation du statut
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Message non trouvé ou accès non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /messages/recu/non-lu:
+    put:
+      tags:
+        - Messages
+      summary: Marquer un message reçu comme "non lu"
+      description: Met à jour le statut d'un message reçu en "non lu".
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatut"
+      responses:
+        "200":
+          description: Message marqué comme non lu avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Erreur de validation du statut
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Message non trouvé ou accès non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /messages/envoyes:
     get:
+      tags:
+        - Messages
       summary: Récupérer la liste des messages envoyés
-      description: L'utilisateur doit être authentifié.
+      description: Récupère tous les messages envoyés par l'utilisateur authentifié.
       security:
         - bearerAuth: []
       responses:
@@ -167,40 +271,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /messages/{messageId}/attachments/{id}:
+
+  # Routes Pièces Jointes
+  /messages/{messageId}/attachments/{attachmentId}:
     get:
+      tags:
+        - Pièces Jointes
       summary: Télécharger une pièce jointe d'un message
-      description: L'utilisateur doit être authentifié et propriétaire du message.
+      description: Permet de télécharger une pièce jointe spécifique d'un message. L'utilisateur doit être authentifié et propriétaire du message.
       security:
         - bearerAuth: []
       parameters:
         - in: path
           name: messageId
           required: true
+          description: ID du message
           schema:
             type: integer
         - in: path
-          name: id
+          name: attachmentId
           required: true
+          description: ID de la pièce jointe
           schema:
             type: integer
       responses:
         "200":
           description: Pièce jointe téléchargée avec succès
           content:
-            application/octet-stream: {}
-        "404":
-          description: Pièce jointe non trouvée
-          content:
-            application/json:
+            application/octet-stream:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: string
+                format: binary
         "401":
           description: Non autorisé
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "404":
+          description: Pièce jointe non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -220,14 +340,18 @@ components:
       properties:
         nom:
           type: string
+          example: "Doe"
         prenom:
           type: string
+          example: "John"
         email:
           type: string
           format: email
+          example: "john.doe@example.com"
         mdp:
           type: string
           format: password
+          example: "P@ssw0rd!"
 
     UtilisateurLogin:
       type: object
@@ -238,33 +362,42 @@ components:
         email:
           type: string
           format: email
+          example: "john.doe@example.com"
         mdp:
           type: string
           format: password
+          example: "P@ssw0rd!"
 
     Utilisateur:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         nom:
           type: string
+          example: "Doe"
         prenom:
           type: string
+          example: "John"
         email:
           type: string
           format: email
+          example: "john.doe@example.com"
         date_creation:
           type: string
           format: date-time
+          example: "2025-01-01T12:00:00Z"
         status_en_ligne:
           type: boolean
+          example: true
 
     UtilisateurResponse:
       type: object
       properties:
         message:
           type: string
+          example: "Utilisateur créé avec succès"
         utilisateur:
           $ref: "#/components/schemas/Utilisateur"
 
@@ -273,10 +406,13 @@ components:
       properties:
         token:
           type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         nom:
           type: string
+          example: "Doe"
         prenom:
           type: string
+          example: "John"
 
     ## Schémas des Messages
     MessageCreate:
@@ -287,53 +423,73 @@ components:
       properties:
         objet:
           type: string
+          description: Objet du message
+          example: "Réunion de projet"
         corps:
           type: string
+          description: Contenu du message
+          example: "Bonjour, veuillez trouver ci-joint les documents pour la réunion de projet."
         destinataires:
-          type: array
-          items:
-            type: string
-            format: email
+          type: string
+          description: Tableau JSON des adresses e-mail (envoyé sous forme de chaîne)
+          example: '["destinataire1@example.com", "destinataire2@example.com"]'
+        files:
+          type: string
+          format: binary
+          description: Jusqu'à 5 fichiers joints
 
     DestinataireDetail:
       type: object
       properties:
         id_destinataire:
           type: integer
+          example: 2
         nom:
           type: string
+          example: "Smith"
         prenom:
           type: string
+          example: "Anna"
         email:
           type: string
           format: email
+          example: "anna.smith@example.com"
 
     PieceJointe:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         nom_fichier:
           type: string
+          example: "document.pdf"
         taille:
           type: integer
+          example: 2048
         chemin_de_stockage:
           type: string
+          example: "/uploads/document.pdf"
         messageId:
           type: integer
+          example: 1
 
     MessageEnvoye:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         objet:
           type: string
+          example: "Réunion de projet"
         corps:
           type: string
+          example: "Bonjour, veuillez trouver ci-joint les documents pour la réunion de projet."
         date_envoi:
           type: string
           format: date-time
+          example: "2025-01-02T09:30:00Z"
         destinataires:
           type: array
           items:
@@ -348,28 +504,37 @@ components:
       properties:
         id:
           type: integer
+          example: 1
         nom:
           type: string
+          example: "Doe"
         prenom:
           type: string
+          example: "John"
         email:
           type: string
           format: email
+          example: "john.doe@example.com"
 
     MessageRecu:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         objet:
           type: string
+          example: "Réunion de projet"
         corps:
           type: string
+          example: "Bonjour, veuillez trouver ci-joint les documents pour la réunion de projet."
         date_envoi:
           type: string
           format: date-time
+          example: "2025-01-02T09:30:00Z"
         statut:
           type: string
+          example: "lu"
         expediteur:
           $ref: "#/components/schemas/MessageRecuExpediteur"
         piecesJointes:
@@ -382,16 +547,18 @@ components:
       properties:
         message:
           type: string
+          example: "Message envoyé avec succès"
         data:
           $ref: "#/components/schemas/MessageEnvoye"
 
-    MessageIdPayload:
+    UpdateStatut:
       type: object
       required:
         - messageId
       properties:
         messageId:
           type: integer
+          example: 1
 
     ## Réponses génériques
     SuccessResponse:
@@ -399,9 +566,16 @@ components:
       properties:
         message:
           type: string
+          example: "Statut du message mis à jour avec succès"
 
     Error:
       type: object
       properties:
         message:
           type: string
+          example: "Description de l'erreur"
+
+    ## Schéma des Pièces Jointes
+    AttachmentDownload:
+      type: string
+      format: binary
