@@ -1,14 +1,62 @@
 /**
  * Fichier : routes/message.js
- * Description : Gestion des routes pour l'envoi, la réception, et la mise à jour de messages,
- *               ainsi que l'upload de pièces jointes via Multer (multipart/form-data).
+ * Description : Gestion des routes pour la réception, et la mise à jour de messages,
+ *               ainsi que le téléchargement de pièces jointes.
  */
-
 const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const authenticateToken = require("../middleware/authenticateToken");
+const path = require("path");
+const fs = require("fs");
+
+router.get("/:messageId/attachments/:attachmentId", authenticateToken, async (req, res) => {
+	const { messageId, attachmentId } = req.params;
+
+	try {
+		// Récupérer les informations sur la pièce jointe
+		const pieceJointe = await prisma.piecejointe.findFirst({
+			where: {
+				id: parseInt(attachmentId, 10),
+				messageId: parseInt(messageId, 10),
+			},
+		});
+
+		// Vérifier si la pièce jointe existe
+		if (!pieceJointe) {
+			return res.status(404).json({
+				message: "Pièce jointe non trouvée ou non associée à ce message.",
+			});
+		}
+
+		// Vérifier si le fichier existe sur le système de fichiers
+		const filePath = path.resolve(pieceJointe.chemin_de_stockage);
+		if (!fs.existsSync(filePath)) {
+			return res.status(404).json({
+				message: "Fichier introuvable sur le serveur.",
+			});
+		}
+
+		// Envoyer le fichier au client
+		res.download(filePath, pieceJointe.nom_fichier, (err) => {
+			if (err) {
+				console.error("Erreur lors du téléchargement du fichier :", err);
+				res.status(500).json({
+					message: "Une erreur est survenue lors du téléchargement du fichier.",
+				});
+			}
+		});
+	} catch (error) {
+		console.error("Erreur lors de la récupération de la pièce jointe :", error);
+		res.status(500).json({
+			message: "Une erreur interne s'est produite.",
+			error: error.message,
+		});
+	}
+});
+
+module.exports = router;
 
 //--------------------------------------------------------------------
 // 3. Route GET : Récupérer les messages reçus par l'utilisateur
