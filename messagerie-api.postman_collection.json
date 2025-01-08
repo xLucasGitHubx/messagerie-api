@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "9893fd9b-6e24-4c71-979c-34ee4ccc9537",
+		"name": "messagerie-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30167462"
+	},
+	"item": [
+		{
+			"name": "utilisateurs/signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nom\": \"test\",\r\n  \"prenom\": \"test\",\r\n  \"email\": \"test@test.com\",\r\n  \"mdp\": \"a\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/utilisateurs/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"utilisateurs",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "utilisateurs/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"b@b.com\",\r\n  \"mdp\": \"b\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/utilisateurs/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"utilisateurs",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/upload",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzM2MzMyMzIyLCJleHAiOjE3MzYzMzU5MjJ9.f5lJO_RRa9Tih8PN9tFeRHgO_ft6ZTRFQ5rcXWYheIw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "objet",
+							"value": "sans pj",
+							"type": "text"
+						},
+						{
+							"key": "corps",
+							"value": "qdsfqsd",
+							"type": "text"
+						},
+						{
+							"key": "destinataires",
+							"value": "[\"b@b.com\"]",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Lucas Madjinda/Desktop/Ma_Formation/2_Mon_Profil/lettre_motivation&cv/RECOMMANDATION LUCAS.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/envoyes",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM2MTUwODc2LCJleHAiOjE3MzYxNTQ0NzZ9.LQlMWaVxeW-FFwHJ3au_voT09H9FLxlkgtgcdZX1dh0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/envoyes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"envoyes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/recu",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM2MzMyNTM3LCJleHAiOjE3MzYzMzYxMzd9.VxqtYYH2MAE3o_gXQ7Ls9Z9gzgcOAP0iPmhJaKFc-r0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/recu",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"recu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/recu/lu",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM2MzMyNTM3LCJleHAiOjE3MzYzMzYxMzd9.VxqtYYH2MAE3o_gXQ7Ls9Z9gzgcOAP0iPmhJaKFc-r0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"messageId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/recu/lu",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"recu",
+						"lu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/recu/non-lu",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzM2MTYxNTQyLCJleHAiOjE3MzYxNjUxNDJ9.an4XnyKO-iWya7Lmy5iDftdKmY_gG4C1OTtuHHPIaf0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"messageId\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/recu/non-lu",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"recu",
+						"non-lu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "messages/{messageId}/attachements/{attachementId}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzM2MTYxNTQyLCJleHAiOjE3MzYxNjUxNDJ9.an4XnyKO-iWya7Lmy5iDftdKmY_gG4C1OTtuHHPIaf0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"messageId\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/messages/{messageId}/attachements/{attachementId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"messages",
+						"{messageId}",
+						"attachements",
+						"{attachementId}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

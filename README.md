@@ -136,6 +136,7 @@ node server.js
 - **PUT** `/messages/recu/non-lu` : Repasser un message à _non lu_.
 
 > **Astuce** : Pour **tester l’envoi de fichiers**, sélectionnez `form-data` dans Postman et utilisez le champ `files` de type **File** pour chaque pièce jointe.
+> Une collection POSTMAN est joint au projet afin de gagner du temps lors des test!
 
 ---
 
