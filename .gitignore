@@ -1,3 +1,5 @@
 node_modules
-# Keep environment variables out of version control
+# Garde les variables d'environnement en dehors du control de version
 .env
+# Garde le fichier de lock pour npm install en dehors du control de version
+package-lock.json
