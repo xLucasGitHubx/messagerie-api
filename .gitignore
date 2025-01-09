@@ -1,5 +1,3 @@
 node_modules
 # Garde les variables d'environnement en dehors du control de version
 .env
-# Garde le fichier de lock pour npm install en dehors du control de version
-package-lock.json
