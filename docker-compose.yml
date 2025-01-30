@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: messagerie_api
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    ports:
+      - "3306:3306"
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-container
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - .:/usr/src/app
+    # Chaîner les commandes avec && pour éviter l’erreur "Cannot find module ..."
+    command: >
+      bash -c "
+      npm rebuild bcrypt --build-from-source &&
+      npx prisma migrate dev --name init &&
+      node server.js
+      "
+    restart: always
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

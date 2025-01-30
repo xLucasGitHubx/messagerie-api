@@ -7,14 +7,21 @@ WORKDIR /usr/src/app
 # Copier les fichiers package.json et package-lock.json (ou yarn.lock) dans le conteneur
 COPY package*.json ./
 
+# RUN  apt-get update
+# RUN  apt-get install -y openssl
+
 # Installer les dépendances de l'application
 RUN npm install
+RUN npm rebuild bcrypt --build-from-source
 
 # Copier le reste des fichiers de l'application dans le conteneur
 COPY . .
 
 # Générer le client Prisma
 RUN npx prisma generate
+
+# Appliquer les migrations pour créer les tables
+# RUN npx prisma migrate dev --name init
 
 # Exposer le port sur lequel l'application va tourner
 EXPOSE 3000
