@@ -21,7 +21,7 @@ COPY . .
 RUN npx prisma generate
 
 # Appliquer les migrations pour créer les tables
-# RUN npx prisma migrate dev --name init
+RUN npx prisma migrate dev --name init
 
 # Exposer le port sur lequel l'application va tourner
 EXPOSE 3000
