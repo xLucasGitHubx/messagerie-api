@@ -3,65 +3,59 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model message {
-  id           Int           @id @default(autoincrement()) // Identifiant unique du message
-  objet        String?       // Objet du message (optionnel)
-  corps        String        // Contenu du message
-  date_envoi   DateTime      @default(now())               // Date et heure d'envoi (par défaut : maintenant)
-  statusId     Int           // Référence vers le statut du message
-  expediteurId Int           // Référence vers l'expéditeur du message (utilisateur)
+model Utilisateur {
+  id              Int        @id @default(autoincrement())
+  nom             String
+  prenom          String
+  email           String     @unique
+  mdp             String
+  date_creation   DateTime   @default(now())
+  status_en_ligne Boolean    @default(false)
 
-  // Relations
-  utilisateur  utilisateur   @relation(fields: [expediteurId], references: [id], map: "Message_expediteurId_fkey")
-  status       status        @relation(fields: [statusId], references: [id], map: "Message_statusId_fkey")
-  piecejointe  piecejointe[] // Liste des pièces jointes associées à ce message
-  recevoir     recevoir[]    // Liste des destinataires du message (relation avec le modèle "recevoir")
-
-  // Index pour optimiser les requêtes sur les clés étrangères
-  @@index([expediteurId], map: "Message_expediteurId_fkey")
-  @@index([statusId], map: "Message_statusId_fkey")
+  messagesEnvoyes Message[]
+  messagesRecus   Recevoir[]
 }
 
+model Status {
+  id    Int     @id @default(autoincrement())
+  etat  String  @unique
+  messages Message[]
+}
 
-model piecejointe {
+model Message {
+  id           Int          @id @default(autoincrement())
+  objet        String?
+  corps        String
+  date_envoi   DateTime     @default(now())
+  statusId     Int
+  expediteurId Int
+
+  expediteur   Utilisateur  @relation(fields: [expediteurId], references: [id])
+  status       Status       @relation(fields: [statusId], references: [id])
+  piecesJointes PieceJointe[]
+  destinataires Recevoir[]
+}
+
+model PieceJointe {
   id                 Int     @id @default(autoincrement())
   nom_fichier        String
   taille             Int
   chemin_de_stockage String
   messageId          Int
-  message            message @relation(fields: [messageId], references: [id], map: "PieceJointe_messageId_fkey")
 
-  @@index([messageId], map: "PieceJointe_messageId_fkey")
+  message            Message @relation(fields: [messageId], references: [id])
 }
 
-model recevoir {
+model Recevoir {
   id_destinataire Int
   id_message      Int
-  utilisateur     utilisateur @relation(fields: [id_destinataire], references: [id], map: "Recevoir_id_destinataire_fkey")
-  message         message     @relation(fields: [id_message], references: [id], map: "Recevoir_id_message_fkey")
+
+  destinataire    Utilisateur @relation(fields: [id_destinataire], references: [id])
+  message         Message     @relation(fields: [id_message], references: [id])
 
   @@id([id_destinataire, id_message])
-  @@index([id_message], map: "Recevoir_id_message_fkey")
-}
-
-model status {
-  id      Int       @id @default(autoincrement())
-  etat    String    @unique(map: "Status_etat_key")
-  message message[]
-}
-
-model utilisateur {
-  id              Int        @id @default(autoincrement())
-  nom             String
-  prenom          String
-  email           String     @unique(map: "Utilisateur_email_key")
-  mdp             String
-  date_creation   DateTime   @default(now())
-  status_en_ligne Boolean    @default(false)
-  message         message[]
-  recevoir        recevoir[]
 }
