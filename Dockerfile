@@ -21,3 +21,7 @@ EXPOSE 3000
 
 # Commande pour démarrer l'application
 CMD ["node", "server.js"]
+
+# Questions 3 du TP
+# docker pull mysql:8.0
+# docker run -d --name mydb -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mysql:8.0
